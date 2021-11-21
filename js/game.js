@@ -1,8 +1,7 @@
 $(document).ready(function() {
-    const GAME_STEP_DELAY = 10;
+    const GAME_STEP_DELAY = 1;
+
     let currentGameStep = 0;
-
-
 
     function getGameStepTime() {
         let dateNow = new Date();
@@ -60,6 +59,7 @@ $(document).ready(function() {
         this.invertDirectionY = function() {
             this.directionY = this.directionY * -1;
         };
+
     }
 
     function Wall(options) {
@@ -95,7 +95,6 @@ $(document).ready(function() {
         };
     }
 
-
     function Racket(options) {
         this.id = Math.trunc(Math.random() * 1000);
         this.x = options.x;
@@ -113,7 +112,7 @@ $(document).ready(function() {
               top: ${this.y}px;
               width: ${this.width}px;
               height: ${this.height}px;
-              background: purple;
+              background: red;
               `;
 
             document.documentElement.append(result);
@@ -137,15 +136,15 @@ $(document).ready(function() {
             this.renderView();
         };
     }
+    let score = null;
 
-    function block(options) {
+    function Pin(options) {
         this.id = Math.trunc(Math.random() * 1000);
         this.x = options.x;
         this.y = options.y;
-        this.width = Math.min(options.width, 50);
-        this.height = Math.min(options.height, 50);
-        this.width = Math.max(this.width, 10);
-        this.height = Math.max(this.height, 10);
+        this.width = options.width;
+        this.height = options.height;
+        this.color = options.color;
 
         this.createView = function() {
             let result = document.createElement("div");
@@ -155,51 +154,38 @@ $(document).ready(function() {
               top: ${this.y}px;
               width: ${this.width}px;
               height: ${this.height}px;
-              background: skyblue;
+              background: ${this.color}
               `;
-
             document.documentElement.append(result);
             return result;
         };
-
         this.div = this.createView();
 
         this.renderState = function() {};
 
-        this.renderView = function() {
-            this.div.style.left = this.x + 'px';
-        };
-
-        this.doMove = function(event) {
-            this.x = event.x;
-        };
+        this.renderView = function() {};
 
         this.live = function() {
             this.renderState();
             this.renderView();
         };
+        this.remove = function() {
+            this.div.remove();
+            return score++
+        }
     }
-
     let objects = [];
 
     objects.push(
         new Ball({
-            diametr: 50,
-            color: "blue",
+            diametr: 100,
+            color: "purple",
             x: 100,
             y: 100,
             startDirectionX: -1,
         })
     );
 
-    objects.push(
-        new Ball({
-            diametr: 40,
-            color: "orange",
-            x: 200,
-            y: 200,
-        })
-    );
 
     objects.push(
         new Wall({
@@ -218,119 +204,6 @@ $(document).ready(function() {
             height: document.documentElement.clientHeight,
         })
     );
-    objects.push(
-        new block({
-            x: 500,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 560,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 620,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 680,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 740,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 800,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 860,
-            y: 20,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 560,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 620,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 680,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 740,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 800,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 860,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-    objects.push(
-        new block({
-            x: 920,
-            y: 60,
-            width: 100,
-            height: 20,
-        })
-    );
-
 
     objects.push(
         new Wall({
@@ -340,15 +213,222 @@ $(document).ready(function() {
             height: document.documentElement.clientHeight,
         })
     );
+
+    objects.push(
+        new Pin({
+            x: 540,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 650,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 750,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 850,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 950,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 1050,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 1150,
+            y: 20,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+    objects.push(
+        new Pin({
+            x: 540,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 650,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 750,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 850,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 950,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 1050,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 1150,
+            y: 80,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+    objects.push(
+        new Pin({
+            x: 540,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 650,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 750,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 850,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 950,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 1050,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+    objects.push(
+        new Pin({
+            x: 1150,
+            y: 150,
+            width: 80,
+            height: 30,
+            color: "skyblue",
+        })
+    );
+
+
     let r = new Racket({
         x: 0,
         y: document.documentElement.clientHeight - 40,
-        width: 90,
-        height: 20,
+        width: 150,
+        height: 10,
     });
-
-
-
     document.documentElement.onmousemove = r.doMove.bind(r);
     objects.push(r);
 
@@ -357,7 +437,7 @@ $(document).ready(function() {
             let ball = null;
             let wall = null;
             let racket = null;
-            let block = null;
+            let pin = null;
             if (objectA instanceof Ball) {
                 ball = objectA;
             } else if (objectA instanceof Wall) {
@@ -374,7 +454,16 @@ $(document).ready(function() {
             } else if (objectB instanceof Racket) {
                 racket = objectB;
             }
-
+            if (objectA instanceof Ball) {
+                ball = objectA;
+            } else if (objectA instanceof Pin) {
+                pin = objectA;
+            }
+            if (objectB instanceof Ball) {
+                ball = objectB;
+            } else if (objectB instanceof Pin) {
+                pin = objectB;
+            }
 
             if (ball && wall) {
                 if (
@@ -393,7 +482,6 @@ $(document).ready(function() {
                 ) {
                     ball.invertDirectionY();
                 }
-
             }
 
             if (ball && racket) {
@@ -405,16 +493,18 @@ $(document).ready(function() {
                     ball.invertDirectionY();
                 }
             }
-            if (ball && block) {
+
+            if (ball && pin) {
                 if (
-                    ball.x >= block.x &&
-                    ball.x <= block.x + block.width &&
-                    ball.y + ball.diametr === block.y
+                    (ball.x + ball.diametr === pin.x ||
+                        ball.x === pin.x + pin.width) &&
+                    ball.y > pin.y &&
+                    ball.y < pin.y + pin.height
                 ) {
                     ball.invertDirectionY();
+                    pin.remove();
                 }
             }
-
         }
     }
 
@@ -444,10 +534,10 @@ $(document).ready(function() {
         let gameOver = isGameOver();
 
         currentGameStep++;
-        if (currentGameStep < 10000 && !gameOver) {
+        if (currentGameStep < 1000000 && !gameOver) {
             setTimeout(doGameStep, GAME_STEP_DELAY);
         } else {
-            alert("Игра закончена");
+            alert(`Игра закончена, ваш счет : ${score}`);
         }
     }
 
